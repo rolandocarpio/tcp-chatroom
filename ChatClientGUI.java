@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.net.*;
+import java.util.Set;
 
 public class ChatClientGUI extends ChatClient {
 
@@ -35,7 +38,7 @@ public class ChatClientGUI extends ChatClient {
         // adjusted font and text size
         Font font = new Font("Times New Roman", Font.PLAIN, 25);
         window.setFont(font);
-        window.setText("Enter your username: ");
+        window.setText("Enter your username: \n");
         window.setEditable(false);
         scrollPane = new JScrollPane(window);
 
@@ -44,7 +47,7 @@ public class ChatClientGUI extends ChatClient {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         // increases size of the text field
-        textEntry.setFont(font);
+        // textEntry.setFont(font);
         textEntry = new JTextField("", 50);
         textEntry.setPreferredSize(new Dimension(300, 50));
 
@@ -59,20 +62,44 @@ public class ChatClientGUI extends ChatClient {
             textEntry.setText("");
 
             // adds date and time
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss a");
 
-            if (!hasUsername) {
+            /* if (chatClient.usernames.isEmpty() && !hasUsername) 
+            {
+                writeThread.setUsername(text);
+                hasUsername = true;
+                jfrm.setTitle(text + "'s Chat Messenger");
+                window.append("\n Welcome to the group chat1: " + writeThread.getUsername() + "\n");
+            }
+            else if (chatClient.usernames.isEmpty() && !hasUsername)
+            {
+                for (String str : chatClient.usernames) 
+                {
+                    if (str.equals(text))
+                    {
+                        window.append("Username taken, enter another");
+                    }
+                }
+            } */
+            //else
+            if (!hasUsername)
+            {
                 writeThread.setUsername(text);
                 hasUsername = true;
                 jfrm.setTitle(text + "'s Chat Messenger");
                 window.append("\n Welcome to the group chat: " + writeThread.getUsername() + "\n");
-            } else {
-                String prefix = dtf.format(LocalDateTime.now()) + " [" + writeThread.getUsername() + "]: ";
+            }
+            else /*if(hasUsername)*/
+            {
+                String prefix = "[" + dtf.format(LocalDateTime.now()) + "] [" + writeThread.getUsername() + "]: ";
                 writeThread.sendMessage(text);
                 if (text.equals("."))
+                {
                     window.append(" \n Thank you for chatting. Goodbye! \n");
+                    System.exit(0);
+                }
                 else
-                    window.append("\n" + prefix + text + "\n");
+                    window.append(prefix + text + "\n");
             }
 
         });

@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 public class ChatClient {
     private String hostName;
     private int port;
-    private String username;
+    private String username = null;
     private ReadThread readThread;
     private WriteThread writeThread;
     private ChatClientGUI clientGUI;
@@ -84,14 +84,14 @@ class ReadThread extends Thread {
     }
 
     public void run() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm a");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss a");
         String response = "";
 
         while (true) {
             try {
                 response = reader.readLine();
                 if (response != null) {
-                    String formatedResponse = "\n[" + dtf.format(LocalDateTime.now()) + "]:  " + response;
+                    String formatedResponse = "["+ dtf.format(LocalDateTime.now()) + "] " + response;
                     // System.out.println(formatedResponse);
                     clientGUI.window.append(formatedResponse + "\n");
                 } else {
@@ -157,8 +157,9 @@ class WriteThread {
 // clients
 class UserThread extends Thread {
     private Socket socket;
-    private ChatServer chatServer;
+    public ChatServer chatServer;
     private PrintWriter writer;
+
 
     public UserThread(Socket socket, ChatServer chatServer) {
         this.socket = socket;
@@ -177,9 +178,14 @@ class UserThread extends Thread {
             printUsers();
 
             String username = reader.readLine();
+            while (chatServer.usernames.contains(username))
+            {
+                writer.println("\nUsername taken, please enter a new usernameClient: ");
+                username = reader.readLine();
+            }
             chatServer.addUsername(username);
 
-            String serverMessage = "A NEW USER HAS NOW CONNECTED: " + username;
+            String serverMessage = "\nA NEW USER HAS NOW CONNECTED: " + username;
             chatServer.broadcast(serverMessage, this);
 
             String clientMessage;
