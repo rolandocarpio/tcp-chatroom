@@ -1,5 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
 
 public class ChatServerGUI extends ChatServer {
 
@@ -37,7 +40,8 @@ public class ChatServerGUI extends ChatServer {
     }
 
     public void displayMessage(String message) {
-        SwingUtilities.invokeLater(() -> window.append(message + "\n"));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss a");
+        SwingUtilities.invokeLater(() -> window.append("[" + dtf.format(LocalDateTime.now()) + "] " + message + "\n"));
     }
 
     public static void main(String[] args) {
