@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.net.InetAddress;
 
 public class ChatServer extends ChatClient {
     private int port;
@@ -66,7 +67,7 @@ public class ChatServer extends ChatClient {
 
     public void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            serverGUI.displayMessage("Chat server is listening to port: " + port);
+            serverGUI.displayMessage("Chat server is listening to port: " + port + "\nHost Name/IP Address: " + InetAddress.getLocalHost());
             while (true) {
                 Socket socket = serverSocket.accept();
 
