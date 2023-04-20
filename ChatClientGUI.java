@@ -35,7 +35,7 @@ public class ChatClientGUI extends ChatClient {
         // adjusted font and text size
         Font font = new Font("Times New Roman", Font.PLAIN, 25);
         window.setFont(font);
-        window.setText("Enter your username: ");
+        window.setText("Enter your username: \n");
         window.setEditable(false);
         scrollPane = new JScrollPane(window);
 
@@ -58,7 +58,7 @@ public class ChatClientGUI extends ChatClient {
             textEntry.setText("");
 
             // adds date and time
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss a");
 
             if (!hasUsername) {
                 writeThread.setUsername(text);
@@ -66,7 +66,7 @@ public class ChatClientGUI extends ChatClient {
                 jfrm.setTitle(text + "'s Chat Messenger");
                 window.append("\n Welcome to the group chat: " + writeThread.getUsername() + "\n");
             } else {
-                String prefix = dtf.format(LocalDateTime.now()) + " [" + writeThread.getUsername() + "]: ";
+                String prefix = "[" + dtf.format(LocalDateTime.now()) + "] [" + writeThread.getUsername() + "]: ";
                 writeThread.sendMessage(text);
                 if (text.equals("."))
                     window.append(" \n Thank you for chatting. Goodbye! \n");

@@ -84,14 +84,14 @@ class ReadThread extends Thread {
     }
 
     public void run() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm a");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss a");
         String response = "";
 
         while (true) {
             try {
                 response = reader.readLine();
                 if (response != null) {
-                    String formatedResponse = "\n[" + dtf.format(LocalDateTime.now()) + "]:  " + response;
+                    String formatedResponse = "[" + dtf.format(LocalDateTime.now()) + "] " + response;
                     // System.out.println(formatedResponse);
                     clientGUI.window.append(formatedResponse + "\n");
                 } else {

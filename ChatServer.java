@@ -115,7 +115,7 @@ class UserThread extends Thread {
             String username = reader.readLine();
             chatServer.addUsername(username);
 
-            String serverMessage = "A NEW USER HAS NOW CONNECTED: " + username;
+            String serverMessage = "\nA NEW USER HAS NOW CONNECTED: " + username;
             chatServer.broadcast(serverMessage, this);
 
             String clientMessage;
