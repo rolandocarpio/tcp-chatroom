@@ -68,8 +68,19 @@ public class ChatClientGUI extends ChatClient {
             } else {
                 String prefix = "[" + dtf.format(LocalDateTime.now()) + "] [" + writeThread.getUsername() + "]: ";
                 writeThread.sendMessage(text);
-                if (text.equals("."))
-                    window.append(" \n Thank you for chatting. Goodbye! \n");
+                if (text.equals(".")) {
+                    window.append(" \n Thank you for chatting. Goodbye! (Window will close in 5 seconds) \n");
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException ex) {
+                                // Handle the exception
+                            }
+                            System.exit(0);
+                        }
+                    });
+                }
                 else
                     window.append("\n" + prefix + text + "\n");
             }
