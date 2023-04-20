@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-
 public class ChatServerGUI extends ChatServer {
 
     private JFrame jfrm;

@@ -2,13 +2,12 @@ import java.net.*;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.net.InetAddress;
 
 public class ChatServer extends ChatClient {
     private int port;
     private ChatServerGUI serverGUI;
 
-    public static Set<String> usernames = new HashSet<>();
+    public Set<String> usernames = new HashSet<>();
     private Set<UserThread> userThreads = new HashSet<>();
 
     public ChatServer(int port) {
@@ -67,7 +66,7 @@ public class ChatServer extends ChatClient {
 
     public void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            serverGUI.displayMessage("Chat server is listening to port: " + port + "\nIP Address: " + InetAddress.getLocalHost());
+            serverGUI.displayMessage("Chat server is listening to port: " + port);
             while (true) {
                 Socket socket = serverSocket.accept();
 
@@ -84,5 +83,95 @@ public class ChatServer extends ChatClient {
     public static void main(String[] args) {
         ChatServer server = new ChatServer(5000);
         server.startServer();
+    }
+}
+
+
+// each client connection is processed in a separate thread to handle multiple
+// clients
+// reads messages sent from the client and broadcasts for all other connected
+// clients
+class UserThread extends Thread {
+    private Socket socket;
+    private ChatServer chatServer;
+    private PrintWriter writer;
+    public static boolean hasUniqueUsername = false;
+
+    public UserThread(Socket socket, ChatServer chatServer) {
+        this.socket = socket;
+        this.chatServer = chatServer;
+    }
+
+    // allow this thread to broadcast chat chatServer
+    public void run() {
+        try {
+            InputStream input = socket.getInputStream();
+            BufferedReader reader = new BufferedReader((new InputStreamReader(input)));
+
+            OutputStream output = socket.getOutputStream();
+            writer = new PrintWriter(output, true);
+
+            printUsers();
+
+            String username = reader.readLine();
+            if (chatServer.usernames.contains(username))
+            {
+                do
+                {
+                    writer.println("\nUsername taken, please enter a new username: ");
+                    username = reader.readLine();
+                }
+                while (chatServer.usernames.contains(username));
+            }
+            hasUniqueUsername = true;
+            chatServer.addUsername(username);
+
+            /*for (String str : chatServer.usernames)
+            {
+                if (!str.equals(username))
+                {
+                    writer.println("\nUsername taken, please enter a new username: ");
+                    username = reader.readLine();
+                }
+                else
+                {
+                    chatServer.addUsername(username);
+                }
+            }*/
+
+            String serverMessage = "\nA NEW USER HAS NOW CONNECTED: " + username;
+            chatServer.broadcast(serverMessage, this);
+
+            String clientMessage;
+
+            // disconnects the user when they type ".
+            while (!(clientMessage = reader.readLine()).equals(".")) {
+                serverMessage = "[" + username + "]: " + clientMessage;
+                chatServer.broadcast(serverMessage, this);
+            }
+
+            chatServer.removeUser(username, this);
+            serverMessage = username + " IS NOW DISCONNECTED";
+            chatServer.broadcast(serverMessage, this);
+            socket.close();
+
+        } catch (IOException ex) {
+            System.out.println("USERTHREAD ERROR: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    // will show a newly connected user the list of users already in the chat room
+    public void printUsers() {
+        if (chatServer.hasUsers()) {
+            writer.println("CONNECTED USERS: " + chatServer.getUsernames());
+        } else {
+            writer.println("YOU'RE ALL ALONE");
+        }
+    }
+
+    // message sent to client
+    void sendMessage(String message) {
+        writer.println(message);
     }
 }
