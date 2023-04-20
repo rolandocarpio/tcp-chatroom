@@ -44,7 +44,6 @@ public class ChatClientGUI extends ChatClient {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         // increases size of the text field
-        textEntry.setFont(font);
         textEntry = new JTextField("", 50);
         textEntry.setPreferredSize(new Dimension(300, 50));
 
