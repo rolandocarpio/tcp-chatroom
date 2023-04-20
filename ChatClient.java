@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class ChatClient {
     private String hostName;
@@ -53,8 +54,11 @@ public class ChatClient {
     public static void main(String[] args) {
 
         // host name
-        String hostName = "localhost";
+        // String hostName = "localhost";
         // default port 5000 as test
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the IP address for port forwarding: ");
+        String hostName = scanner.nextLine();
         int port = 5000;
 
         ChatClient client = new ChatClient(hostName, port);
